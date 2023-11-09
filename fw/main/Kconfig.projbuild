@@ -1,0 +1,8 @@
+menu "Fancontroller"
+    menu "Wifi"
+        config WIFI_SSID
+            string "SSID"
+        config WIFI_PASSPHRASE
+            string "Passphrase"
+    endmenu
+endmenu
