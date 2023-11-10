@@ -1,0 +1,5 @@
+**.bak
+**.kicad_sch-bak
+*-backups
+jlcpcb/
+fp-info-cache

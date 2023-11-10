@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name "Espressif")(type "KiCad")(uri "${KIPRJMOD}/contrib/espressif/libraries/Espressif.kicad_sym")(options "")(descr ""))
+  (lib (name "fancontroller")(type "KiCad")(uri "${KIPRJMOD}/fancontroller.kicad_sym")(options "")(descr ""))
+)
