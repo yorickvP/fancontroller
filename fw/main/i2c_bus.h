@@ -8,3 +8,6 @@
 #define I2C_BUS_EXTERNAL_NUM 1
 
 esp_err_t i2c_bus_init(void);
+
+esp_err_t i2c_bus_take(i2c_port_t port);
+esp_err_t i2c_bus_give(i2c_port_t port);

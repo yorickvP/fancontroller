@@ -9,6 +9,7 @@
 #include <driver/shtc3.h>
 
 #include "i2c_bus.h"
+#include "util.h"
 
 #define TAG "temperature"
 
@@ -16,12 +17,24 @@ static SemaphoreHandle_t s_mutex;
 static shtc3_sample_t s_sample;
 static bool s_sample_valid;
 
+static esp_err_t temperature_measure(i2c_port_t port, shtc3_sample_t *sample)
+{
+    esp_err_t ret;
+
+    ERROR_CHECK_SIMPLE(i2c_bus_take(port));
+    ret = shtc3_measure(port, sample);
+    i2c_bus_give(port); // Ignore error
+err:
+    return ret;
+}
+
 static void temperature_task(void *arg)
 {
     while (1)
     {
         shtc3_sample_t sample;
-        if (shtc3_measure(I2C_BUS_EXTERNAL_NUM, &sample) == ESP_OK)
+
+        if (temperature_measure(I2C_BUS_EXTERNAL_NUM, &sample) == ESP_OK)
         {
             xSemaphoreTake(s_mutex, portMAX_DELAY);
             memcpy(&s_sample, &sample, sizeof(s_sample));
