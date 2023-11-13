@@ -63,6 +63,10 @@ static const char *data_reset_reason_to_str(esp_reset_reason_t reset_reason)
         return "brownout"; // Brownout reset (software or hardware)
     case ESP_RST_SDIO:
         return "sdio"; // Reset over SDIO
+    case ESP_RST_USB:  // Reset by USB peripheral
+        return "usb";
+    case ESP_RST_JTAG: // Reset by JTAG
+        return "jtag";
     default:
         ESP_LOGW("data_reset_reason_to_str", "Unexpected value for esp_reset_reason_t: %d", reset_reason);
         return "unknown";
@@ -183,9 +187,23 @@ esp_err_t data_tacho_to_json(cJSON *root)
 esp_err_t data_sensors_to_json(cJSON *root)
 {
     temperature_sample_t sample;
-    if (temperature_fetch(&sample)) {
-        cJSON_AddNumberToObject(root, "temperature_mc", sample.temperature_mc);
-        cJSON_AddNumberToObject(root, "rel_hum_mperct", sample.rel_hum_mperct);
+
+    cJSON *on_board_obj = cJSON_CreateObject();
+    cJSON_AddItemToObject(root, "temphum_on_board", on_board_obj);
+
+    cJSON *external_obj = cJSON_CreateObject();
+    cJSON_AddItemToObject(root, "temphum_external", external_obj);
+
+    if (temperature_fetch(TEMPERATURE_CHANNEL_ON_BOARD, &sample))
+    {
+        cJSON_AddNumberToObject(on_board_obj, "temperature_mc", sample.temperature_mc);
+        cJSON_AddNumberToObject(on_board_obj, "rel_hum_mperct", sample.rel_hum_mperct);
+    }
+
+    if (temperature_fetch(TEMPERATURE_CHANNEL_EXTERNAL, &sample))
+    {
+        cJSON_AddNumberToObject(external_obj, "temperature_mc", sample.temperature_mc);
+        cJSON_AddNumberToObject(external_obj, "rel_hum_mperct", sample.rel_hum_mperct);
     }
 
     return ESP_OK;
