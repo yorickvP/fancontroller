@@ -1,3 +1,6 @@
+## Dependencies
+This project uses the Espressif [ESP-IDF version 5.1.1 for the ESP32S3](https://docs.espressif.com/projects/esp-idf/en/v5.1.1/esp32s3/get-started/index.html).
+
 ## How to build
 ```bash
 rm ./sdkconfig
