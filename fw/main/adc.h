@@ -18,4 +18,4 @@ typedef struct
 
 esp_err_t adc_init(void);
 
-void adc_fetch(adc_samples_t *samples);
+void adc_fetch(adc_samples_t* samples);

@@ -4,7 +4,7 @@
 
 typedef struct
 {
-    const char *task_name;
+    const char* task_name;
     uint8_t percentage;
 } performance_entry_t;
 

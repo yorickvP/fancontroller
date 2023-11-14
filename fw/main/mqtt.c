@@ -21,15 +21,14 @@ static esp_mqtt_client_handle_t m_client;
 static mqtt_topics_t m_topics;
 static volatile bool m_connected;
 
-static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data)
+static void mqtt_event_handler(void* handler_args, esp_event_base_t base, int32_t event_id, void* event_data)
 {
     ESP_LOGD(TAG, "Event dispatched from event loop base=%s, event_id=%" PRIi32, base, event_id);
     esp_mqtt_event_handle_t event = event_data;
     esp_mqtt_client_handle_t client = event->client;
 
     ESP_LOGD(TAG, "free heap size is %" PRIu32 ", minimum %" PRIu32, esp_get_free_heap_size(), esp_get_minimum_free_heap_size());
-    switch ((esp_mqtt_event_id_t)event_id)
-    {
+    switch ((esp_mqtt_event_id_t)event_id) {
     case MQTT_EVENT_CONNECTED:
         ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
         esp_mqtt_client_subscribe(client, m_topics.duty, 0);
@@ -40,20 +39,16 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
         m_connected = false;
         break;
     case MQTT_EVENT_DATA:
-        if (strcmp(event->topic, m_topics.duty))
-        {
+        if (strcmp(event->topic, m_topics.duty)) {
             data_process_duty_json_str(event->data, event->data_len);
-        }
-        else
-        {
+        } else {
             ESP_LOGW(TAG, "MQTT_EVENT_DATA %.*s (not matched); %.*s", event->topic_len, event->topic, event->data_len, event->data);
         }
         break;
     case MQTT_EVENT_ERROR:
         ESP_LOGI(TAG, "MQTT_EVENT_ERROR");
         ESP_LOGI(TAG, "MQTT5 return code is %d", event->error_handle->connect_return_code);
-        if (event->error_handle->error_type == MQTT_ERROR_TYPE_TCP_TRANSPORT)
-        {
+        if (event->error_handle->error_type == MQTT_ERROR_TYPE_TCP_TRANSPORT) {
             ESP_LOGI(TAG, "Last errno string (%s)", strerror(event->error_handle->esp_transport_sock_errno));
         }
         break;
@@ -68,24 +63,22 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
 
 static void mqtt_report(void)
 {
-    cJSON *root = cJSON_CreateObject();
+    cJSON* root = cJSON_CreateObject();
     ESP_ERROR_CHECK(data_status_to_json(root));
-    const char *resp = cJSON_PrintUnformatted(root);
+    const char* resp = cJSON_PrintUnformatted(root);
     esp_mqtt_client_publish(m_client, m_topics.status, resp, 0, 0, 0);
-    free((void *)resp);
+    free((void*)resp);
     cJSON_Delete(root);
 }
 
-static void mqtt_status_handler(void *_event_handler_arg,
-                                esp_event_base_t _event_base,
-                                int32_t event_id,
-                                void *_event_data)
+static void mqtt_status_handler(void* _event_handler_arg,
+    esp_event_base_t _event_base,
+    int32_t event_id,
+    void* _event_data)
 {
-    switch (event_id)
-    {
+    switch (event_id) {
     case EVENT_STATUS_PING:
-        if (m_connected)
-        {
+        if (m_connected) {
             mqtt_report();
         }
         break;
@@ -115,11 +108,11 @@ esp_err_t mqtt_init(void)
     esp_mqtt_client_register_event(m_client, ESP_EVENT_ANY_ID, mqtt_event_handler, NULL);
 
     esp_event_handler_instance_register(EVENTS, EVENT_STATUS_PING,
-                                        mqtt_status_handler, NULL, NULL);
+        mqtt_status_handler, NULL, NULL);
     esp_event_handler_instance_register(EVENTS, EVENT_ONLINE,
-                                        mqtt_status_handler, NULL, NULL);
+        mqtt_status_handler, NULL, NULL);
     esp_event_handler_instance_register(EVENTS, EVENT_OFFLINE,
-                                        mqtt_status_handler, NULL, NULL);
+        mqtt_status_handler, NULL, NULL);
 
     return ESP_OK;
 }

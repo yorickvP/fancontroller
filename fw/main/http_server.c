@@ -1,11 +1,11 @@
 #include "http_server.h"
 
-#include <string.h>
-#include <esp_http_server.h>
-#include <esp_chip_info.h>
-#include <esp_random.h>
-#include <esp_log.h>
 #include <cJSON.h>
+#include <esp_chip_info.h>
+#include <esp_http_server.h>
+#include <esp_log.h>
+#include <esp_random.h>
+#include <string.h>
 
 #include "data.h"
 #include "util.h"
@@ -13,19 +13,20 @@
 #define TAG "http_server"
 
 /* Simple handler for getting system handler */
-static esp_err_t status_get_handler(httpd_req_t *req)
+static esp_err_t status_get_handler(httpd_req_t* req)
 {
     httpd_resp_set_type(req, "application/json");
-    cJSON *root = cJSON_CreateObject();
+    cJSON* root = cJSON_CreateObject();
     ESP_ERROR_CHECK(data_status_to_json(root));
-    const char *resp = cJSON_PrintUnformatted(root);
+    const char* resp = cJSON_PrintUnformatted(root);
     httpd_resp_sendstr(req, resp);
-    free((void *)resp);
+    free((void*)resp);
     cJSON_Delete(root);
     return ESP_OK;
 }
 
-esp_err_t http_server_init(void) {
+esp_err_t http_server_init(void)
+{
     httpd_handle_t server = NULL;
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
     config.uri_match_fn = httpd_uri_match_wildcard;

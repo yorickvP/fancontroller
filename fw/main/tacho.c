@@ -1,8 +1,8 @@
 #include "tacho.h"
 
+#include <driver/gpio.h>
 #include <esp_log.h>
 #include <esp_timer.h>
-#include <driver/gpio.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/queue.h>
 #include <freertos/semphr.h>
@@ -36,7 +36,7 @@ static tacho_fan_state_t s_tacho_fan_state[5];
 static QueueHandle_t s_event_queue = NULL;
 static SemaphoreHandle_t s_mutex;
 
-static void IRAM_ATTR gpio_isr_handler(void *arg)
+static void IRAM_ATTR gpio_isr_handler(void* arg)
 {
     tacho_event_t event = {
         .gpio_i = (uint32_t)arg,
@@ -46,7 +46,7 @@ static void IRAM_ATTR gpio_isr_handler(void *arg)
     xQueueSendFromISR(s_event_queue, &event, NULL);
 }
 
-static void tacho_task(void *arg)
+static void tacho_task(void* arg)
 {
     gpio_config_t io_conf = {
         .intr_type = GPIO_INTR_POSEDGE,
@@ -58,18 +58,16 @@ static void tacho_task(void *arg)
     gpio_config(&io_conf);
 
     gpio_install_isr_service(0);
-    gpio_isr_handler_add(GPIO_FAN1_TACHO, gpio_isr_handler, (void *)0);
-    gpio_isr_handler_add(GPIO_FAN2_TACHO, gpio_isr_handler, (void *)1);
-    gpio_isr_handler_add(GPIO_FAN3_TACHO, gpio_isr_handler, (void *)2);
-    gpio_isr_handler_add(GPIO_FAN4_TACHO, gpio_isr_handler, (void *)3);
-    gpio_isr_handler_add(GPIO_FAN5_TACHO, gpio_isr_handler, (void *)4);
+    gpio_isr_handler_add(GPIO_FAN1_TACHO, gpio_isr_handler, (void*)0);
+    gpio_isr_handler_add(GPIO_FAN2_TACHO, gpio_isr_handler, (void*)1);
+    gpio_isr_handler_add(GPIO_FAN3_TACHO, gpio_isr_handler, (void*)2);
+    gpio_isr_handler_add(GPIO_FAN4_TACHO, gpio_isr_handler, (void*)3);
+    gpio_isr_handler_add(GPIO_FAN5_TACHO, gpio_isr_handler, (void*)4);
 
     tacho_event_t event;
-    while (1)
-    {
-        if (xQueueReceive(s_event_queue, &event, portMAX_DELAY))
-        {
-            tacho_fan_state_t *state = &s_tacho_fan_state[event.gpio_i];
+    while (1) {
+        if (xQueueReceive(s_event_queue, &event, portMAX_DELAY)) {
+            tacho_fan_state_t* state = &s_tacho_fan_state[event.gpio_i];
             uint64_t delta = event.time - state->last_time;
 
             if (delta >= TACHO_DELTA_GLITCH_FILTER_US) // Glitch filter
@@ -97,11 +95,9 @@ void tacho_fetch(tacho_fans_rpm_t fans)
     xSemaphoreTake(s_mutex, portMAX_DELAY);
     uint64_t now = esp_timer_get_time();
 
-    for (size_t i = 0; i < ARRAY_SIZE(s_tacho_fan_state); ++i)
-    {
+    for (size_t i = 0; i < ARRAY_SIZE(s_tacho_fan_state); ++i) {
         uint32_t rpm = 0;
-        if (s_tacho_fan_state[i].delta > 0 && s_tacho_fan_state[i].last_time + TACHO_READING_MAX_AGE_US > now)
-        {
+        if (s_tacho_fan_state[i].delta > 0 && s_tacho_fan_state[i].last_time + TACHO_READING_MAX_AGE_US > now) {
             rpm = (60 * 1000 * 1000) / s_tacho_fan_state[i].delta; // us to RPM
         }
         fans[i] = rpm;

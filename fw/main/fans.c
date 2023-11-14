@@ -1,9 +1,9 @@
 #include "fans.h"
 
-#include <string.h>
 #include <driver/ledc.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/semphr.h>
+#include <string.h>
 
 #include "util.h"
 
@@ -39,7 +39,8 @@ static esp_err_t channel_config(ledc_channel_t channel, int gpio_num)
         .intr_type = LEDC_INTR_DISABLE,
         .gpio_num = gpio_num,
         .duty = 0, // Set duty to 0%
-        .hpoint = 0};
+        .hpoint = 0
+    };
     return ledc_channel_config(&config);
 }
 
@@ -82,7 +83,8 @@ esp_err_t fans_init(void)
         .timer_num = LEDC_TIMER,
         .duty_resolution = LEDC_DUTY_RES,
         .freq_hz = LEDC_FREQUENCY, // Set output frequency at 5 kHz
-        .clk_cfg = LEDC_AUTO_CLK};
+        .clk_cfg = LEDC_AUTO_CLK
+    };
     ESP_ERROR_CHECK(ledc_timer_config(&ledc_timer));
 
     ESP_ERROR_CHECK(channel_config(LEDC_FAN1_CHANNEL, GPIO_FAN1_PWM));
@@ -98,8 +100,7 @@ esp_err_t fans_init(void)
 
 esp_err_t fans_command(uint8_t fan_i, fan_pwm8_t duty)
 {
-    if (fan_i > ARRAY_SIZE(s_state))
-    {
+    if (fan_i > ARRAY_SIZE(s_state)) {
         return ESP_ERR_INVALID_ARG;
     }
 
