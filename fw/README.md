@@ -17,7 +17,6 @@ idf.py build
 * PID
 * CO2 sensor
 * Light sensor
-* Temperature sensors
-* LED
+* LED emotes
 * USB-PD
 * Current supervisor
