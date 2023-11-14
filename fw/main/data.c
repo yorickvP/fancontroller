@@ -182,18 +182,18 @@ esp_err_t data_sensors_to_json(cJSON* root)
 {
     temperature_sample_t sample;
 
-    cJSON* on_board_obj = cJSON_CreateObject();
-    cJSON_AddItemToObject(root, "temphum_on_board", on_board_obj);
-
-    cJSON* external_obj = cJSON_CreateObject();
-    cJSON_AddItemToObject(root, "temphum_external", external_obj);
-
     if (temperature_fetch(TEMPERATURE_CHANNEL_ON_BOARD, &sample)) {
+        cJSON* on_board_obj = cJSON_CreateObject();
+        cJSON_AddItemToObject(root, "temphum_on_board", on_board_obj);
+
         cJSON_AddNumberToObject(on_board_obj, "temperature_mc", sample.temperature_mc);
         cJSON_AddNumberToObject(on_board_obj, "rel_hum_mperct", sample.rel_hum_mperct);
     }
 
     if (temperature_fetch(TEMPERATURE_CHANNEL_EXTERNAL, &sample)) {
+        cJSON* external_obj = cJSON_CreateObject();
+        cJSON_AddItemToObject(root, "temphum_external", external_obj);
+
         cJSON_AddNumberToObject(external_obj, "temperature_mc", sample.temperature_mc);
         cJSON_AddNumberToObject(external_obj, "rel_hum_mperct", sample.rel_hum_mperct);
     }
