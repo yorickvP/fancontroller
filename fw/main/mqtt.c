@@ -9,7 +9,6 @@
 
 #define TAG "mqtt"
 
-#define CONFIG_BROKER_URL "mqtt://10.32.0.18"
 #define MAX_TOPIC_SIZE (64)
 
 typedef struct
@@ -84,7 +83,7 @@ esp_err_t mqtt_init(void)
     snprintf(m_topics.status, MAX_TOPIC_SIZE, "fancontroller/%s/status", data_get_id());
 
     esp_mqtt_client_config_t mqtt_cfg = {
-        .broker.address.uri = CONFIG_BROKER_URL,
+        .broker.address.uri = CONFIG_MQTT_BROKER_URL,
         .session.protocol_ver = MQTT_PROTOCOL_UNDEFINED,
         .network.disable_auto_reconnect = false,
         .network.reconnect_timeout_ms = 1000,
