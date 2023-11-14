@@ -63,10 +63,6 @@ static const char *data_reset_reason_to_str(esp_reset_reason_t reset_reason)
         return "brownout"; // Brownout reset (software or hardware)
     case ESP_RST_SDIO:
         return "sdio"; // Reset over SDIO
-    case ESP_RST_USB:  // Reset by USB peripheral
-        return "usb";
-    case ESP_RST_JTAG: // Reset by JTAG
-        return "jtag";
     default:
         ESP_LOGW("data_reset_reason_to_str", "Unexpected value for esp_reset_reason_t: %d", reset_reason);
         return "unknown";
