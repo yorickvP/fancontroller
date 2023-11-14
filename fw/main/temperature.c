@@ -13,14 +13,16 @@
 
 #define TAG "temperature"
 
+#define GPIO_EXT_INT (40)
+
 typedef struct
 {
     SemaphoreHandle_t mutex;
     shtc3_sample_t sample;
     bool sample_valid;
-} temperature_entry_t;
+} temperature_sensor_t;
 
-static temperature_entry_t s_entries[TEMPERATURE_CHANNEL_MAX_COUNT];
+static temperature_sensor_t s_sensors[TEMPERATURE_CHANNEL_MAX_COUNT];
 
 static esp_err_t temperature_measure(i2c_port_t port, shtc3_sample_t* sample)
 {
@@ -33,28 +35,57 @@ err:
     return ret;
 }
 
-static void temperature_measure_store(temperature_channel_t channel, i2c_port_t port)
+static gpio_num_t temperature_get_presence_gpio(temperature_channel_t channel)
+{
+    switch (channel) {
+    case TEMPERATURE_CHANNEL_EXTERNAL:
+        return GPIO_EXT_INT;
+    default:
+        return GPIO_NUM_NC;
+    }
+}
+
+static bool temperature_is_present_unsafe(temperature_channel_t channel)
+{
+    const gpio_num_t gpio_presence = temperature_get_presence_gpio(channel);
+
+    if (gpio_presence == GPIO_NUM_NC) {
+        return true; // Having no detection GPIO implies that it is always present.
+    }
+
+    // Strobe GPIO pin pull down in case it is not connected (and hence not pulled to a known state)
+    gpio_set_pull_mode(gpio_presence, GPIO_PULLDOWN_ONLY);
+    vTaskDelay(1); // Wait for one tick.
+    gpio_set_pull_mode(gpio_presence, GPIO_FLOATING);
+    vTaskDelay(1); // Wait for one tick.
+
+    return (gpio_get_level(gpio_presence) == 1);
+}
+
+static void temperature_measure_store_unsafe(temperature_channel_t channel, i2c_port_t port)
 {
     shtc3_sample_t sample;
-    temperature_entry_t* entry = &s_entries[channel];
+    temperature_sensor_t* sensor = &s_sensors[channel];
 
-    if (temperature_measure(port, &sample) == ESP_OK) {
-        xSemaphoreTake(entry->mutex, portMAX_DELAY);
-        memcpy(&entry->sample, &sample, sizeof(sample));
-        entry->sample_valid = true;
-        xSemaphoreGive(entry->mutex);
+    bool is_present = temperature_is_present_unsafe(channel);
+
+    if (is_present && temperature_measure(port, &sample) == ESP_OK) {
+        xSemaphoreTake(sensor->mutex, portMAX_DELAY);
+        memcpy(&sensor->sample, &sample, sizeof(sample));
+        sensor->sample_valid = true;
+        xSemaphoreGive(sensor->mutex);
     } else {
-        xSemaphoreTake(entry->mutex, portMAX_DELAY);
-        entry->sample_valid = false;
-        xSemaphoreGive(entry->mutex);
+        xSemaphoreTake(sensor->mutex, portMAX_DELAY);
+        sensor->sample_valid = false;
+        xSemaphoreGive(sensor->mutex);
     }
 }
 
 static void temperature_task(void* arg)
 {
     while (1) {
-        temperature_measure_store(TEMPERATURE_CHANNEL_ON_BOARD, I2C_BUS_PRIMARY_NUM);
-        temperature_measure_store(TEMPERATURE_CHANNEL_EXTERNAL, I2C_BUS_EXTERNAL_NUM);
+        temperature_measure_store_unsafe(TEMPERATURE_CHANNEL_ON_BOARD, I2C_BUS_PRIMARY_NUM);
+        temperature_measure_store_unsafe(TEMPERATURE_CHANNEL_EXTERNAL, I2C_BUS_EXTERNAL_NUM);
         vTaskDelay(pdMS_TO_TICKS(500));
     }
 }
@@ -62,25 +93,38 @@ static void temperature_task(void* arg)
 bool temperature_fetch(temperature_channel_t channel, temperature_sample_t* sample_out)
 {
     bool sample_valid;
-    temperature_entry_t* entry = &s_entries[channel];
+    temperature_sensor_t* sensor = &s_sensors[channel];
 
-    xSemaphoreTake(entry->mutex, portMAX_DELAY);
-    sample_valid = entry->sample_valid;
+    xSemaphoreTake(sensor->mutex, portMAX_DELAY);
+    sample_valid = sensor->sample_valid;
     if (sample_valid) {
-        sample_out->temperature_mc = entry->sample.temperature_mc;
-        sample_out->rel_hum_mperct = entry->sample.rel_hum_mperct;
+        sample_out->temperature_mc = sensor->sample.temperature_mc;
+        sample_out->rel_hum_mperct = sensor->sample.rel_hum_mperct;
     }
-    xSemaphoreGive(entry->mutex);
+    xSemaphoreGive(sensor->mutex);
 
     return sample_valid;
 }
 
 esp_err_t temperature_init(void)
 {
-    for (size_t i = 0; i < TEMPERATURE_CHANNEL_MAX_COUNT; ++i) {
-        temperature_entry_t* entry = &s_entries[i];
-        entry->mutex = xSemaphoreCreateMutex();
-        entry->sample_valid = false;
+    for (temperature_channel_t channel = 0; channel < TEMPERATURE_CHANNEL_MAX_COUNT; ++channel) {
+        temperature_sensor_t* sensor = &s_sensors[channel];
+        sensor->mutex = xSemaphoreCreateMutex();
+        sensor->sample_valid = false;
+
+        gpio_num_t gpio_presence = temperature_get_presence_gpio(channel);
+
+        if (gpio_presence != GPIO_NUM_NC) {
+            gpio_config_t io_conf = {
+                .intr_type = GPIO_INTR_DISABLE,
+                .mode = GPIO_MODE_INPUT,
+                .pin_bit_mask = (1ULL << gpio_presence),
+                .pull_down_en = 0,
+                .pull_up_en = 0,
+            };
+            gpio_config(&io_conf);
+        }
     }
 
     xTaskCreate(temperature_task, "temperature", 1024 * 4, NULL, 10, NULL);
