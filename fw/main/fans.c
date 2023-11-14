@@ -5,6 +5,7 @@
 #include <freertos/semphr.h>
 #include <string.h>
 
+#include "led.h"
 #include "util.h"
 
 #define TAG "fans"
@@ -38,7 +39,7 @@ static esp_err_t channel_config(ledc_channel_t channel, int gpio_num)
         .timer_sel = LEDC_TIMER,
         .intr_type = LEDC_INTR_DISABLE,
         .gpio_num = gpio_num,
-        .duty = 0, // Set duty to 0%
+        .duty = 0xff, // Set duty to 100% (inverted)
         .hpoint = 0
     };
     return ledc_channel_config(&config);
@@ -62,6 +63,21 @@ static void fans_persist_unsafe(void)
     any |= fans_persist_channel_unsafe(LEDC_FAN5_CHANNEL, s_state[4]);
 
     gpio_set_level(GPIO_12V_EN, any);
+
+    // TODO Temporary emotes until controller is written
+    if (any) {
+        led_set_color((rgb_t) {
+            .r = 0x00,
+            .g = 0x10,
+            .b = 0x00,
+        });
+    } else {
+        led_set_color((rgb_t) {
+            .r = 0x10,
+            .g = 0x00,
+            .b = 0x00,
+        });
+    }
 }
 
 esp_err_t fans_init(void)
@@ -75,14 +91,13 @@ esp_err_t fans_init(void)
         .pull_down_en = 0,
         .pull_up_en = 0,
     };
-    // configure GPIO with the given settings
     gpio_config(&io_conf);
 
     ledc_timer_config_t ledc_timer = {
         .speed_mode = LEDC_MODE,
         .timer_num = LEDC_TIMER,
         .duty_resolution = LEDC_DUTY_RES,
-        .freq_hz = LEDC_FREQUENCY, // Set output frequency at 5 kHz
+        .freq_hz = LEDC_FREQUENCY,
         .clk_cfg = LEDC_AUTO_CLK
     };
     ESP_ERROR_CHECK(ledc_timer_config(&ledc_timer));
