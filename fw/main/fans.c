@@ -47,8 +47,12 @@ static esp_err_t channel_config(ledc_channel_t channel, int gpio_num)
 
 static bool fans_persist_channel_unsafe(ledc_channel_t channel, fan_pwm8_t duty)
 {
-    ESP_ERROR_CHECK(ledc_set_duty(LEDC_MODE, channel, 0xff - duty));
-    ESP_ERROR_CHECK(ledc_update_duty(LEDC_MODE, channel));
+    if (duty == 0x00) {
+        ESP_ERROR_CHECK(ledc_stop(LEDC_MODE, channel, 1)); // Inverted
+    } else {
+        ESP_ERROR_CHECK(ledc_set_duty(LEDC_MODE, channel, 0xff - duty)); // Inverted
+        ESP_ERROR_CHECK(ledc_update_duty(LEDC_MODE, channel));
+    }
     return duty > 0;
 }
 
