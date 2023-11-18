@@ -50,10 +50,10 @@
         "version": "0.4.6"
       },
       "construct": {
-        "sha256": "3c130a67f05610557dd1b27e062a7165f92b517f9ed50db880ebe068696fd712",
+        "sha256": "6b8d0ee239e1cc933829b3573df7c9d9d9554344d82f6281c11a913e2be95cb3",
         "type": "url",
-        "url": "https://files.pythonhosted.org/packages/30/2f/e2e6bad1b80f744cf5c2a6d622e3dee698b43e6c040f980ae0ac0edd5e54/construct-2.10.54.tar.gz",
-        "version": "2.10.54"
+        "url": "https://files.pythonhosted.org/packages/3d/ca/36191d582a2db51c079094439fc7fca305c9082b95549f3e351b3c9e299e/construct-2.10.69-py3-none-any.whl",
+        "version": "2.10.69"
       },
       "contextlib2": {
         "sha256": "3fbdb64466afd23abaf6c977627b75b6139a5a3e8ce38405c5b413aed7a0471f",
@@ -73,17 +73,53 @@
         "url": "https://files.pythonhosted.org/packages/09/d4/4f05f5d16a4863b30ba96c23b23e942da8889abfa1cdbabf2a0df12a4532/ecdsa-0.18.0-py2.py3-none-any.whl",
         "version": "0.18.0"
       },
+      "esp-coredump": {
+        "sha256": "b6a9bc2482363b17c704b7c4c74de2b1ed7265240c62d56a904983845fe37e39",
+        "type": "url",
+        "url": "https://files.pythonhosted.org/packages/05/89/4f845406eea69203536528a165a1d7834dc30a7458f05ea782913e68738e/esp-coredump-1.7.0.tar.gz",
+        "version": "1.7.0"
+      },
+      "esp-idf-kconfig": {
+        "sha256": "3a4c5dde1dc4eccd9ead9aa589216fe4d5d3d7d4890d00dbfe91d9f95df6734e",
+        "type": "url",
+        "url": "https://files.pythonhosted.org/packages/32/cf/0148f3bd6bad790d32728301319bda54dd36fcede3a2e11f4b22adee7832/esp_idf_kconfig-2.0.1-py3-none-any.whl",
+        "version": "2.0.1"
+      },
+      "esp-idf-monitor": {
+        "sha256": "3a8a613af3ed232a7295cf110128af6b1a9fa576e953061835d5869076981b7f",
+        "type": "url",
+        "url": "https://files.pythonhosted.org/packages/f4/6b/f10e5c133ca017e9d882ca294a380cb2e17cee4afe2334d96506770dc261/esp_idf_monitor-1.3.3-py3-none-any.whl",
+        "version": "1.3.3"
+      },
+      "esp-idf-panic-decoder": {
+        "sha256": "f5795bb81c819d46f381b4e4d42af949c16684a53ce1f6340a4e83dec1094d9a",
+        "type": "url",
+        "url": "https://files.pythonhosted.org/packages/b1/f7/359380a07ec04f699005f049ea72ff73af3a216858320b7f7b974762b79a/esp_idf_panic_decoder-0.2.0-py3-none-any.whl",
+        "version": "0.2.0"
+      },
+      "esp-idf-size": {
+        "sha256": "e35517bfc7557b820dd00af5f64b0778af40e5da0da8b4883759ccf719e51c45",
+        "type": "url",
+        "url": "https://files.pythonhosted.org/packages/f1/fc/80679051e451d1252656c269a7e2b1e3bda0564943e0b3ea46a1a74fa039/esp_idf_size-0.4.3-py3-none-any.whl",
+        "version": "0.4.3"
+      },
+      "esptool": {
+        "sha256": "549ef93eef42ee7e9462ce5a53c16df7a0c71d91b3f77e19ec15749804cdf300",
+        "type": "url",
+        "url": "https://files.pythonhosted.org/packages/a3/63/c757f50b606996a7e676f000b40626f65be63b3a10030563929c968e431c/esptool-4.6.2.tar.gz",
+        "version": "4.6.2"
+      },
       "filelock": {
         "sha256": "57dbda9b35157b05fb3e58ee91448612eb674172fab98ee235ccb0b5bee19a1c",
         "type": "url",
         "url": "https://files.pythonhosted.org/packages/81/54/84d42a0bee35edba99dee7b59a8d4970eccdd44b99fe728ed912106fc781/filelock-3.13.1-py3-none-any.whl",
         "version": "3.13.1"
       },
-      "future": {
-        "sha256": "34a17436ed1e96697a86f9de3d15a3b0be01d8bc8de9c1dffd59fb8234ed5307",
+      "freertos-gdb": {
+        "sha256": "4dd719bdc5720aea5676b1809f427593b70668768e9ea455a0bb24f58e5efbe1",
         "type": "url",
-        "url": "https://files.pythonhosted.org/packages/8f/2e/cf6accf7415237d6faeeebdc7832023c90e0282aa16fd3263db0eb4715ec/future-0.18.3.tar.gz",
-        "version": "0.18.3"
+        "url": "https://files.pythonhosted.org/packages/9d/3b/f36cbcf0f78873d2d26450cbf70101cad72aafe9c36330d773d410850974/freertos_gdb-1.0.2-py3-none-any.whl",
+        "version": "1.0.2"
       },
       "idf-component-manager": {
         "sha256": "2bba2341a8bc2096f84d874c0487d20212ae5bce2d9fb64d515635f140d79b38",
@@ -97,29 +133,11 @@
         "url": "https://files.pythonhosted.org/packages/fc/34/3030de6f1370931b9dbb4dad48f6ab1015ab1d32447850b9fc94e60097be/idna-3.4-py3-none-any.whl",
         "version": "3.4"
       },
-      "itsdangerous": {
-        "sha256": "5174094b9637652bdb841a3029700391451bd092ba3db90600dea710ba28e97c",
-        "type": "url",
-        "url": "https://files.pythonhosted.org/packages/9c/96/26f935afba9cd6140216da5add223a0c465b99d0f112b68a4ca426441019/itsdangerous-2.0.1-py3-none-any.whl",
-        "version": "2.0.1"
-      },
-      "jinja2": {
-        "sha256": "077ce6014f7b40d03b47d1f1ca4b0fc8328a692bd284016f806ed0eaca390ad8",
-        "type": "url",
-        "url": "https://files.pythonhosted.org/packages/20/9a/e5d9ec41927401e41aea8af6d16e78b5e612bca4699d417f646a9610a076/Jinja2-3.0.3-py3-none-any.whl",
-        "version": "3.0.3"
-      },
       "kconfiglib": {
-        "sha256": "2205ae2628a827f7d76884bc0a2e8645d8670615402bb53f642e1e041f4a163f",
+        "sha256": "edcd35a20e7e138a9a9e96149027f805f785e818d2eae400b6fa8b0c8845114a",
         "type": "url",
-        "url": "https://files.pythonhosted.org/packages/2a/a2/a046c1fd8f83c611d8610f2188b66ac3fdf0b64ca0b2b47563e9446d0031/kconfiglib-13.7.1-py2.py3-none-any.whl",
-        "version": "13.7.1"
-      },
-      "markupsafe": {
-        "sha256": "65c1a9bcdadc6c28eecee2c119465aebff8f7a584dd719facdd9e825ec61ab52",
-        "type": "url",
-        "url": "https://files.pythonhosted.org/packages/12/b3/d9ed2c0971e1435b8a62354b18d3060b66c8cb1d368399ec0b9baa7c0ee5/MarkupSafe-2.1.3-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
-        "version": "2.1.3"
+        "url": "https://files.pythonhosted.org/packages/8a/f1/d98a89231e779b079b977590efcc31249d959c8f1d4b5858cad69695ff9c/kconfiglib-14.1.0-py2.py3-none-any.whl",
+        "version": "14.1.0"
       },
       "msgpack": {
         "sha256": "28efb066cde83c479dfe5a48141a53bc7e5f13f785b92ddde336c716663039ee",
@@ -145,29 +163,23 @@
         "url": "https://files.pythonhosted.org/packages/33/f9/281a411a5281b674b10830a2f312c64464b49916d097b8919f009de579e0/pyelftools-0.30-py2.py3-none-any.whl",
         "version": "0.30"
       },
-      "pyparsing": {
-        "sha256": "f6c5ef0d7480ad048c054c37632c67fca55299990fff127850181659eea33fc3",
+      "pygdbmi": {
+        "sha256": "f7cac28e1d558927444c880ed1e65da1a5d8686121a3aac16f42fb84d3ceb60d",
         "type": "url",
-        "url": "https://files.pythonhosted.org/packages/de/0a/001be530836743d8be6c2d85069f46fecf84ac6c18c7f5fb8125ee11d854/pyparsing-2.3.1-py2.py3-none-any.whl",
-        "version": "2.3.1"
+        "url": "https://files.pythonhosted.org/packages/c8/4b/71df806f4d260ddf01f9e431f5a6538a4155db3ec84a131d7e087178c591/pygdbmi-0.11.0.0-py3-none-any.whl",
+        "version": "0.11.0.0"
+      },
+      "pyparsing": {
+        "sha256": "32c7c0b711493c72ff18a981d24f28aaf9c1fb7ed5e9667c9e84e3db623bdbfb",
+        "type": "url",
+        "url": "https://files.pythonhosted.org/packages/39/92/8486ede85fcc088f1b3dba4ce92dd29d126fd96b0008ea213167940a2475/pyparsing-3.1.1-py3-none-any.whl",
+        "version": "3.1.1"
       },
       "pyserial": {
         "sha256": "c4451db6ba391ca6ca299fb3ec7bae67a5c55dde170964c7a14ceefec02f2cf0",
         "type": "url",
         "url": "https://files.pythonhosted.org/packages/07/bc/587a445451b253b285629263eb51c2d8e9bcea4fc97826266d186f96f558/pyserial-3.5-py2.py3-none-any.whl",
         "version": "3.5"
-      },
-      "python-engineio": {
-        "sha256": "5a9e6086d192463b04a1428ff1f85b6ba631bbb19d453b144ffc04f530542b84",
-        "type": "url",
-        "url": "https://files.pythonhosted.org/packages/8d/35/b9edf38b6a42077f3c097ab4edb0281adb3cc5434645c0bd301b0b45c767/python_engineio-3.14.2-py2.py3-none-any.whl",
-        "version": "3.14.2"
-      },
-      "python-socketio": {
-        "sha256": "5a21da53fdbdc6bb6c8071f40e13d100e0b279ad997681c2492478e06f370523",
-        "type": "url",
-        "url": "https://files.pythonhosted.org/packages/b2/91/d78afbe5861de53cafe9dcc6eb1a802d5495cfbffb79b8385ee7cf15a71c/python_socketio-4.6.1-py2.py3-none-any.whl",
-        "version": "4.6.1"
       },
       "pyyaml": {
         "sha256": "ba336e390cd8e4d1739f42dfe9bb83a3cc2e80f567d8805e11b46f4a943f5515",
@@ -176,10 +188,10 @@
         "version": "6.0.1"
       },
       "reedsolo": {
-        "sha256": "b8b25cdc83478ccb06361a0e8fadc27b376a3dfabbb1dc6bb583a998a22c0127",
+        "sha256": "2b6a3e402a1ee3e1eea3f932f81e6c0b7bbc615588074dca1dbbcdeb055002bd",
         "type": "url",
-        "url": "https://files.pythonhosted.org/packages/c8/cb/bb2ddbd00c9b4215dd57a2abf7042b0ae222b44522c5eb664a8fd9d786da/reedsolo-1.5.4.tar.gz",
-        "version": "1.5.4"
+        "url": "https://files.pythonhosted.org/packages/09/19/1bb346c0e581557c88946d2bb979b2bee8992e72314cfb418b5440e383db/reedsolo-1.7.0-py3-none-any.whl",
+        "version": "1.7.0"
       },
       "requests": {
         "sha256": "58cd2187c01e70e6e26505bca751777aa9f2ee0b7f4300988b709f44e013003f",
@@ -256,8 +268,34 @@
         "ecdsa": [
           "six"
         ],
+        "esp-coredump": [
+          "construct",
+          "esptool",
+          "pygdbmi"
+        ],
+        "esp-idf-kconfig": [
+          "kconfiglib"
+        ],
+        "esp-idf-monitor": [
+          "esp-coredump",
+          "esp-idf-panic-decoder",
+          "pyelftools",
+          "pyserial"
+        ],
+        "esp-idf-panic-decoder": [],
+        "esp-idf-size": [
+          "pyyaml"
+        ],
+        "esptool": [
+          "bitstring",
+          "cryptography",
+          "ecdsa",
+          "pyserial",
+          "pyyaml",
+          "reedsolo"
+        ],
         "filelock": [],
-        "future": [],
+        "freertos-gdb": [],
         "idf-component-manager": [
           "cachecontrol",
           "click",
@@ -275,25 +313,14 @@
           "urllib3"
         ],
         "idna": [],
-        "itsdangerous": [],
-        "jinja2": [
-          "markupsafe"
-        ],
         "kconfiglib": [],
-        "markupsafe": [],
         "msgpack": [],
         "packaging": [],
         "pycparser": [],
         "pyelftools": [],
+        "pygdbmi": [],
         "pyparsing": [],
         "pyserial": [],
-        "python-engineio": [
-          "six"
-        ],
-        "python-socketio": [
-          "python-engineio",
-          "six"
-        ],
         "pyyaml": [],
         "reedsolo": [],
         "requests": [
@@ -319,5 +346,5 @@
       }
     }
   },
-  "invalidationHash": "5efaea6c6cf20101414a62055ff6efcf522da5b8c62b4eeee2bbc0fec7218d46"
+  "invalidationHash": "a2c142bfac450969b97f34a1b0f60001d5c82a4226cad729d8658f71cf5bb210"
 }

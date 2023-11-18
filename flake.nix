@@ -3,7 +3,7 @@
   inputs = {
     esp-idf = {
       url =
-        "git+https://github.com/espressif/esp-idf.git?ref=refs/tags/v4.4.3&submodules=1";
+        "git+https://github.com/espressif/esp-idf.git?ref=refs/tags/v5.1.2&submodules=1";
       flake = false;
     };
     dream2nix = { url = "github:nix-community/dream2nix"; };
@@ -18,6 +18,9 @@
       packages = [ esp-idf ];
       shellHook = ''
         export IDF_PATH="${esp-idf}"
+        export IDF_PYTHON_ENV_PATH="${esp-idf.pyEnv}"
+        export IDF_TOOLS_PATH="${esp-idf}/tool"
+        export IDF_PYTHON_CHECK_CONSTRAINTS=0
         source ${esp-idf}/export.sh
       '';
     };
@@ -28,6 +31,7 @@
         modules = [
           ./nix/esp-idf/module.nix
           {
+            version = "5.1.2";
             paths = {
               projectRoot = ./.;
               projectRootFile = "flake.nix";

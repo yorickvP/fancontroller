@@ -3,13 +3,14 @@ let
   src = config.deps.esp-idf;
   platform = "linux-amd64";
 
-  tools = (builtins.fromJSON (builtins.readFile "${src}/tools/tools.json")).tools;
+  tools =
+    (builtins.fromJSON (builtins.readFile "${src}/tools/tools.json")).tools;
 
   toDownload = tool:
     let
       version = lib.findFirst ({ status, ... }: status == "recommended") null
         tool.versions;
-      download = version."${platform}" or null;
+      download = version."${platform}" or version.any or null;
     in if download != null then
       config.deps.fetchurl { inherit (download) url sha256; }
     else
@@ -17,32 +18,17 @@ let
 
   toolsTars = (builtins.filter (x: x != null) (builtins.map toDownload tools));
 
-
-in
-{
+in {
   imports = [ dream2nix.modules.dream2nix.pip ];
 
   name = "esp-idf";
-  version = "4.4.3";
 
   mkDerivation = {
     src = config.deps.esp-idf;
-    buildInputs = with config.deps; [
-      libcpp
-      python2Insecure
-      libusb1
-      zlib
-    ];
-    nativeBuildInputs = with config.deps; [
-      autoPatchelfHook
-    ];
-    propagatedBuildInputs = with config.deps; [ config.public.pyEnv git perl cmake ];
+    buildInputs = with config.deps; [ libstdcxx libusb1 zlib ];
+    nativeBuildInputs = [ config.deps.autoPatchelfHook ];
+    propagatedBuildInputs = with config.deps; [ git perl cmake ];
     buildPhase = ''
-      sed \
-        -e '/^gdbgui/d' \
-        -e '/^kconfiglib/c kconfiglib' \
-        -e '/^construct/c construct' \
-        -i requirements.txt
       echo v$version > version.txt
       export IDF_TOOLS_PATH=$out/tool
       mkdir -p $out/tool/dist
@@ -59,42 +45,27 @@ in
     installPhase = ''
       cp -r ./. $out/
       mkdir $out/bin
-      ln -s $out/tool/tools/*/*/*/bin/* $out/bin/
+      rm $out/tool/tools/*/*/*-gdb/bin/*-gdb-3.{6,7,8,9,11}
+      ln -fs $out/tool/tools/*/*/*/bin/* $out/bin/
     '';
   };
 
   buildPythonPackage.format = "other";
 
   deps = { nixpkgs, ... }: {
-    python2Insecure = nixpkgs.python2.overrideAttrs (o: { meta.insecure = false; });
-    libcpp = nixpkgs.stdenv.cc.cc.lib;
+    libstdcxx = nixpkgs.stdenv.cc.cc.lib;
     inherit (nixpkgs) libusb1 zlib autoPatchelfHook git perl fetchurl cmake;
   };
   env.dontUseCmakeConfigure = true;
 
   pip = {
     pypiSnapshotDate = "2023-11-18";
-    #requirementsFiles = [ "${config.deps.esp-idf}/requirements.txt" ];
+    # TODO: merge with
+    # 'https://dl.espressif.com/dl/esp-idf/espidf.constraints.v5.1.txt'
+    # workaround: IDF_PYTHON_CHECK_CONSTRAINTS=0
+    requirementsFiles = [ "${config.deps.esp-idf}/tools/requirements/requirements.core.txt" ];
     flattenDependencies = true;
-    requirementsList = [
-      "setuptools>=21"
-      "click>=7.0"
-      "pyserial>=3.3"
-      "future>=0.15.2"
-      "cryptography>=2.1.4"
-      "--only-binary" "cryptography"
-      "pyparsing>=2.0.3,<2.4.0"
-      "pyelftools>=0.22"
-      "idf-component-manager~=1.0"
-      #"gdbgui==0.13.2.0"
-      "python-socketio<5"
-      "jinja2<3.1"
-      "itsdangerous<2.1"
-      "kconfiglib==13.7.1"
-      "reedsolo>=1.5.3,<=1.5.4"
-      "bitstring>=3.1.6"
-      "ecdsa>=0.16.0"
-      "construct==2.10.54"
-    ];
+    # expose setuptools as a runtime dep
+    buildDependencies.setuptools = false;
   };
 }
