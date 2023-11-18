@@ -19,3 +19,8 @@ jobs:
           sudo rm -rf "/usr/local/share/boost"
           sudo rm -rf "$AGENT_TOOLSDIRECTORY"
           nix build
+          nix build .#hw-1
+      - uses: actions/upload-artifact@v3
+        with:
+          name: outputs
+          path: result/*
