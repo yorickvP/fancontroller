@@ -1,4 +1,5 @@
 build
 sdkconfig
 sdkconfig.*
+!sdkconfig.default
 .vscode

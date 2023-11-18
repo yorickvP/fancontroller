@@ -12,17 +12,6 @@
   outputs = { self, nixpkgs, esp-idf, dream2nix }@inputs: let
     esp-idf = self.packages.x86_64-linux.esp-idf;
     in {
-
-    devShells.x86_64-linux.default = nixpkgs.legacyPackages.x86_64-linux.mkShell {
-      packages = [ esp-idf ];
-      shellHook = ''
-        export IDF_PATH="${esp-idf}"
-        export IDF_PYTHON_ENV_PATH="${esp-idf.pyEnv}"
-        export IDF_TOOLS_PATH="${esp-idf}/tool"
-        export IDF_PYTHON_CHECK_CONSTRAINTS=0
-        source ${esp-idf}/export.sh
-      '';
-    };
     packages.x86_64-linux = {
       esp-idf = inputs.dream2nix.lib.evalModules {
         packageSets.nixpkgs =
