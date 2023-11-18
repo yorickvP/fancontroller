@@ -41,7 +41,11 @@
           }
         ];
       };
-      default = self.packages.x86_64-linux.esp-idf;
+      fw = nixpkgs.legacyPackages.x86_64-linux.callPackage ./nix/fw.nix {
+        shortRev = self.shortRev or "dirty";
+        esp-idf = self.packages.x86_64-linux.esp-idf;
+      };
+      default = self.packages.x86_64-linux.fw;
     };
 
   };
