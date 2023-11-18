@@ -1,40 +1,40 @@
 {
-  description = "A very basic flake";
+  description = "Fan controller";
   inputs = {
     esp-idf = {
       url = "https://github.com/espressif/esp-idf/releases/download/v5.1.1/esp-idf-v5.1.1.zip";
       flake = false;
     };
-    dream2nix = { url = "github:nix-community/dream2nix"; };
+    dream2nix.url = "github:nix-community/dream2nix";
     nixpkgs.follows = "dream2nix/nixpkgs";
   };
 
-  outputs = { self, nixpkgs, esp-idf, dream2nix }@inputs: let
-    esp-idf = self.packages.x86_64-linux.esp-idf;
+  outputs = { self, ... }@inputs:
+    let
+      system = "x86_64-linux";
+      nixpkgs = inputs.nixpkgs.legacyPackages.${system};
     in {
-    packages.x86_64-linux = {
-      esp-idf = inputs.dream2nix.lib.evalModules {
-        packageSets.nixpkgs =
-          inputs.dream2nix.inputs.nixpkgs.legacyPackages.x86_64-linux;
-        modules = [
-          ./nix/esp-idf/module.nix
-          {
-            version = "5.1.1";
-            paths = {
-              projectRoot = ./.;
-              projectRootFile = "flake.nix";
-              package = ./nix/esp-idf;
-            };
-            deps = { inherit (inputs) esp-idf; };
-          }
-        ];
+      packages.${system} = {
+        esp-idf = inputs.dream2nix.lib.evalModules {
+          packageSets = { inherit nixpkgs; };
+          modules = [
+            ./nix/esp-idf/module.nix
+            {
+              version = "5.1.1";
+              paths = {
+                projectRoot = ./.;
+                projectRootFile = "flake.nix";
+                package = ./nix/esp-idf;
+              };
+              deps = { inherit (inputs) esp-idf; };
+            }
+          ];
+        };
+        fw = nixpkgs.callPackage ./nix/fw.nix {
+          shortRev = self.shortRev or "dirty";
+          esp-idf = self.packages.${system}.esp-idf;
+        };
+        default = self.packages.${system}.fw;
       };
-      fw = nixpkgs.legacyPackages.x86_64-linux.callPackage ./nix/fw.nix {
-        shortRev = self.shortRev or "dirty";
-        esp-idf = self.packages.x86_64-linux.esp-idf;
-      };
-      default = self.packages.x86_64-linux.fw;
     };
-
-  };
 }
