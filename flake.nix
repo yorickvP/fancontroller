@@ -2,8 +2,7 @@
   description = "A very basic flake";
   inputs = {
     esp-idf = {
-      url =
-        "git+https://github.com/espressif/esp-idf.git?ref=refs/tags/v5.1.2&submodules=1";
+      url = "https://github.com/espressif/esp-idf/releases/download/v5.1.1/esp-idf-v5.1.1.zip";
       flake = false;
     };
     dream2nix = { url = "github:nix-community/dream2nix"; };
@@ -31,7 +30,7 @@
         modules = [
           ./nix/esp-idf/module.nix
           {
-            version = "5.1.2";
+            version = "5.1.1";
             paths = {
               projectRoot = ./.;
               projectRootFile = "flake.nix";
