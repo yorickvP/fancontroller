@@ -22,5 +22,9 @@ jobs:
           nix build .#hw-1
       - uses: actions/upload-artifact@v3
         with:
-          name: outputs
-          path: result/*
+          name: fancontroller-1.pdf
+          path: result/fancontroller.pdf
+      - uses: actions/upload-artifact@v3
+        with:
+          name: fancontroller-1-gerber.zip
+          path: result/fancontroller.zip
