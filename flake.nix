@@ -15,9 +15,11 @@
       nixpkgs = inputs.nixpkgs.legacyPackages.${system};
     in {
       devShells.${system}.kicad = nixpkgs.mkShell {
-        inputs = [ nixpkgs.kicad ];
+        packages = [ nixpkgs.kicad ];
       };
       packages.${system} = {
+        kicad-unstable = nixpkgs.callPackage ./nix/kicad-unstable.nix {};
+        tovrmlx3d = nixpkgs.callPackage ./nix/tovrmlx3d.nix {};
         esp-idf = inputs.dream2nix.lib.evalModules {
           packageSets = { inherit nixpkgs; };
           modules = [
@@ -48,6 +50,22 @@
           kicad-cli pcb export drill ${./hw/1}/fancontroller.kicad_pcb -o grb/
           zip fancontroller.zip grb/*
           mv fancontroller.zip fancontroller.pdf $out/
+        '';
+        hw-1-3d = nixpkgs.runCommand "fancontroller-3d-1" {
+          nativeBuildInputs = with self.packages.${system}; [ kicad-unstable tovrmlx3d nixpkgs.which ];
+        } ''
+          mkdir -p $out/shapes3D
+          export HOME=/tmp
+          source <(grep "export KICAD7" $(which kicad))
+          kicad-cli pcb export vrml ${./hw/1}/fancontroller.kicad_pcb -o fancontroller.wrl --units in --models-dir shapes3D/ --models-relative
+          tovrmlx3d --encoding xml --no-x3d-extensions fancontroller.wrl > fancontroller.x3d
+          for f in shapes3D/*.wrl; do
+            tovrmlx3d --encoding xml --no-x3d-extensions "$f" > "''${f%.wrl}.x3d"
+          done
+          sed -i 's/\.wrl/\.x3d/g' fancontroller.x3d
+          mv fancontroller.x3d $out
+          cp ${./nix/render-3d.html} $out/index.html
+          mv shapes3D/*.x3d $out/shapes3D
         '';
         default = self.packages.${system}.fw;
       };
