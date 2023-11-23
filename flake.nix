@@ -14,8 +14,13 @@
       system = "x86_64-linux";
       nixpkgs = inputs.nixpkgs.legacyPackages.${system};
     in {
-      devShells.${system}.kicad = nixpkgs.mkShell {
-        packages = [ nixpkgs.kicad ];
+      devShells.${system} = {
+        kicad = nixpkgs.mkShell {
+          packages = [ nixpkgs.kicad ];
+        };
+        with_clangd = self.packages.${system}.default.overrideAttrs (o: {
+          nativeBuildInputs = o.nativeBuildInputs ++ [ nixpkgs.clang-tools ];
+        });
       };
       packages.${system} = {
         kicad-unstable = nixpkgs.callPackage ./nix/kicad-unstable.nix {};
