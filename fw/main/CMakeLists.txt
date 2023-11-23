@@ -8,6 +8,7 @@ idf_component_register(SRCS
     "i2c_bus.c"
     "led.c"
     "mqtt.c"
+    "ota.c"
     "performance.c"
     "periodic.c"
     "tacho.c"
