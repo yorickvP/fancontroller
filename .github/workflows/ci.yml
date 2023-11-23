@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@a56e3a80896f10bfe28feea2c49695c0225b2485
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+      - run: |
+          echo "building"
+          # remove some useless paths, saves 10GB
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "/usr/local/share/boost"
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          nix build
+          nix build .#hw-1
+      - uses: actions/upload-artifact@v3
+        with:
+          name: fancontroller-1.pdf
+          path: result/fancontroller.pdf
+      - uses: actions/upload-artifact@v3
+        with:
+          name: fancontroller-1-gerber.zip
+          path: result/fancontroller.zip
